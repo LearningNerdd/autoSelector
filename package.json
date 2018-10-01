@@ -1,0 +1,33 @@
+{
+  "name": "autoselector",
+  "version": "1.1.0",
+  "description": "auto suggest and dropdown",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@material-ui/core": "3.1.1",
+    "classnames": "latest",
+    "lodash": "4.17.11",
+    "react": "16.4.2",
+    "react-dom": "16.4.2",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --mode development",
+    "auto-select-converter": "babel src -d dist --copy-files",
+    "auto-select-prod": "npm run auto-select-converter",
+    "build": "webpack --mode production",
+    "deploy": "gh-pages -d examples/dist",
+    "publish-demo": "npm run build && npm run deploy"
+  },
+  "peerDependencies": {
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0"
+  },
+  "author": "Girish Prasad Patro",
+  "license": "MIT",
+  "devDependencies": {
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
+  }
+}
