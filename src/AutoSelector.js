@@ -36,7 +36,6 @@ class AutoSelector extends React.Component {
   };
 
   onItemClick = e => {
-    /* console.log("hi", e.target, e.target.value) */
     const { onSelectItem, isMultipleSelection } = this.props;
     const { currentData } = this.state;
     const selectedIndex = e.currentTarget.getAttribute("data-id");
@@ -52,12 +51,24 @@ class AutoSelector extends React.Component {
     );
   };
 
+  getSelectedItemListingStyle = listItem => {
+    const { getSelectedItemListingStyle } = this.props;
+    if (getSelectedItemListingStyle) {
+      return getSelectedItemListingStyle(listItem);
+    }
+    return listItem;
+  };
+
+  getItemListingStyle = listItem => {
+    const { getItemListingStyle } = this.props;
+    if (getItemListingStyle) {
+      return getItemListingStyle(listItem);
+    }
+    return listItem;
+  };
+
   getListItemStyling = (listItem, isSelectionDone = false) => {
-    const {
-      isDropDownIcon,
-      getItemListingStyle,
-      getSelectedItemListingStyle
-    } = this.props;
+    const { isDropDownIcon } = this.props;
     if (listItem && isSelectionDone) {
       return (
         <div
@@ -70,11 +81,11 @@ class AutoSelector extends React.Component {
           })}
           tabindex="1"
         >
-          {getSelectedItemListingStyle(listItem)}
+          {this.getSelectedItemListingStyle(listItem)}
         </div>
       );
     }
-    return getItemListingStyle(listItem);
+    return this.getItemListingStyle(listItem);
   };
 
   toggleDropdown = () => {
@@ -84,7 +95,16 @@ class AutoSelector extends React.Component {
   };
 
   getCoreInputElement = () => {
-    const { isDropDownIcon, readonly, onFocus, onClick, onChange } = this.props;
+    const {
+      isDropDownIcon,
+      readonly,
+      onFocus,
+      onClick,
+      onChange,
+      onBlur,
+      isError
+    } = this.props;
+    const { showDropdown } = this.state;
     return (
       <input
         onKeyDown={this.handleKeyPress}
@@ -100,6 +120,9 @@ class AutoSelector extends React.Component {
           const userInput = get(e, "target.value", "");
           onChange && onChange(userInput);
         }}
+        className={classnames("field-label", {
+          "error-dropdown": isError
+        })}
       />
     );
   };
@@ -107,7 +130,7 @@ class AutoSelector extends React.Component {
   getInputHeader = () => {
     const { isDropDownIcon } = this.props;
     return isDropDownIcon ? (
-      <div class="dropdown">{this.getCoreInputElement()}</div>
+      <div className="dropdown">{this.getCoreInputElement()}</div>
     ) : (
       this.getCoreInputElement()
     );
@@ -120,12 +143,29 @@ class AutoSelector extends React.Component {
       showDropdown,
       currentData
     } = this.state;
-    const { listContainerClassName, containerclassName } = this.props;
+    const {
+      listContainerClassName,
+      containerclassName,
+      errorMessage,
+      label
+    } = this.props;
+    const { onItemClick } = this;
     const selectHeader =
       this.getListItemStyling(currentSelection, true) || this.getInputHeader();
     return (
       <div className={`select ${containerclassName}`}>
+        {label && (
+          <label
+            className={classnames("field-label", {
+              "focused-label": showDropdown
+            })}
+          >
+            {label}
+          </label>
+        )}
         {selectHeader}
+        {!showDropdown &&
+          errorMessage && <span className="error-message">{errorMessage}</span>}
         {!!showDropdown && (
           <ul className={`dropdown-list ${listContainerClassName}`}>
             {currentData.map((listItem, index) => (
@@ -136,7 +176,7 @@ class AutoSelector extends React.Component {
                   "hover-style": currentHoverIndex === index
                 })}
                 onClick={e => {
-                  this.onItemClick(e);
+                  onItemClick(e);
                 }}
               >
                 {this.getListItemStyling(listItem)}
