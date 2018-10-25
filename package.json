@@ -1,6 +1,6 @@
 {
   "name": "autoselector",
-  "version": "1.1.0",
+  "version": "2.1.8",
   "description": "auto suggest and dropdown",
   "main": "dist/index.js",
   "dependencies": {
