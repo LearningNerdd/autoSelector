@@ -1,3 +1,3 @@
 # autoSelector
 
-https://codesandbox.io/s/y0wo050rmj
+https://codesandbox.io/s/189jm1w47q
