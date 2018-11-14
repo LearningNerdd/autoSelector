@@ -1,13 +1,13 @@
 import React from "react";
+//import AutoSelector from "autoselector/dist/AutoSelector";
 import AutoSelector from "./AutoSelector";
 import ReactDOM from "react-dom";
-import "./styles.css";
 const xxxx = [
   <div className="withImage">
     <img src="https://www.gstatic.com/kpui/social/twitter_32x32.png" />
     <p>tegegregergregregregregreg</p>
   </div>,
-  "ergregregregregregregregregreggreg",
+  "aergregregregregregregregregreggreg",
   "ergregregregregregregregregreggreg",
   "ergregregregregregregregregreggreg",
   "ergregregregregregregregregreggreg",
@@ -61,7 +61,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: xxxx
+      data: xxxx,
+      errorMessage: ""
     };
   }
 
@@ -94,18 +95,21 @@ class App extends React.Component {
           onSelectItem={listItem => {
             //console.log("listItem", listItem);
           }}
-          label="sdvdsvdsvsv"
+          label="dropdown list"
           isMultipleSelection={undefined}
-          errorMessage="sfvlmfsvjsdvjdsnvkjdsnvkjdsnvkjdsnvkjdsnvkjdsnv"
+          errorMessage={this.state.errorMessage}
           onChange={input => {
-            console.log(
-              "inputtttttttttttttttttttttttttttttttttttttttttttttttttt",
-              input
-            );
-
+            if (input && input.indexOf("x") !== -1) {
+              this.setState({
+                errorMessage: "Enter Valid input"
+              });
+            } else {
+              this.setState({
+                errorMessage: ""
+              });
+            }
             return this.getData(input);
           }}
-          dataEmptyMsg={<span>xyz</span>}
         />
       </div>
     );

@@ -4,7 +4,6 @@ import classnames from "classnames";
 import range from "lodash/range";
 import "./styles.css";
 
-
 class AutoSelector extends React.Component {
   constructor(props) {
     super(props);
@@ -24,10 +23,17 @@ class AutoSelector extends React.Component {
   handleKeyPress = e => {
     const { currentHoverIndex, currentData } = this.state;
     const { onEscapeShowSuggestion } = this.props;
-    if (e.keyCode === 38 && currentHoverIndex > 0) {
+
+    if ((e.keyCode === 38 || e.keyCode === 40) && currentHoverIndex === null) {
+      return this.setState({
+        currentHoverIndex: 0,
+        showDropdown: true
+      });
+    } else if (e.keyCode === 38 && currentHoverIndex > 0) {
       this.setState(
         prevState => ({
-          currentHoverIndex: prevState.currentHoverIndex - 1
+          currentHoverIndex: prevState.currentHoverIndex - 1,
+          showDropdown: true
         }),
         () => {
           this.scrollList(38);
@@ -36,7 +42,8 @@ class AutoSelector extends React.Component {
     } else if (e.keyCode === 40 && currentHoverIndex < currentData.length - 1) {
       this.setState(
         prevState => ({
-          currentHoverIndex: prevState.currentHoverIndex + 1
+          currentHoverIndex: prevState.currentHoverIndex + 1,
+          showDropdown: true
         }),
         () => {
           this.scrollList(40);
@@ -50,6 +57,7 @@ class AutoSelector extends React.Component {
       });
     } else if (e.keyCode === 27 && !onEscapeShowSuggestion) {
       this.setState({
+        currentHoverIndex: null,
         showDropdown: false
       });
     }
@@ -114,7 +122,8 @@ class AutoSelector extends React.Component {
 
   toggleDropdown = () => {
     this.setState(prevState => ({
-      showDropdown: !prevState.showDropdown
+      showDropdown: !prevState.showDropdown,
+      currentHoverIndex: null
     }));
   };
 
@@ -160,7 +169,8 @@ class AutoSelector extends React.Component {
             const updatedData = onChange(userInput);
             this.setState({
               currentData: updatedData,
-              showDropdown: true
+              showDropdown: true,
+              currentHoverIndex: null
             });
           }
         }}
@@ -231,7 +241,6 @@ class AutoSelector extends React.Component {
     const selectHeader =
       (!showDropdown && this.getListItemStyling(currentSelection, true)) ||
       this.getInputHeader();
-    console.log("this.state", this.state);
     return (
       <div className={`select ${containerclassName}`}>
         {label && (
@@ -244,8 +253,9 @@ class AutoSelector extends React.Component {
           </label>
         )}
         {selectHeader}
-        {!showDropdown &&
-          errorMessage && <span className="error-message">{errorMessage}</span>}
+        {!showDropdown && errorMessage && (
+          <span className="error-message">{errorMessage}</span>
+        )}
         {!!showDropdown && (
           <ul
             className={`dropdown-list ${listContainerClassName}`}
@@ -270,20 +280,15 @@ class AutoSelector extends React.Component {
                 </li>
               ))}
 
-            {currentData &&
-              currentData.length < 1 && (
-                <li
-                  key={1}
-                  data-id={1}
-                  className={classnames("no-result data-empty")}
-                >
-                  {dataEmptyMsg ? (
-                    <span>{dataEmptyMsg}</span>
-                  ) : (
-                    <span>Data</span>
-                  )}
-                </li>
-              )}
+            {currentData && currentData.length < 1 && (
+              <li
+                key={1}
+                data-id={1}
+                className={classnames("no-result data-empty")}
+              >
+                {dataEmptyMsg ? <span>{dataEmptyMsg}</span> : <span>Data</span>}
+              </li>
+            )}
           </ul>
         )}
       </div>
